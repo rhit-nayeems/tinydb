@@ -3,7 +3,7 @@
 Test roadmap for Mandavero end-to-end testing on this fork.
 
 ## Queries
-- [ ] Add Table.first(cond) returning the first matching document
+- [x] Add Table.first(cond) returning the first matching document
   - Table.first(cond) returns the first document matching cond, in insertion order.
   - Table.first(cond) returns None when nothing matches.
   - Existing tests pass.
