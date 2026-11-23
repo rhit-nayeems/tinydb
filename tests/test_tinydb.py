@@ -485,6 +485,52 @@ def test_count(db: TinyDB):
     assert db.count(where('char') == 'd') == 0
 
 
+def test_distinct(db: TinyDB):
+    db.drop_tables()
+    db.insert_multiple([
+        {'author': 'b', 'n': 1},
+        {'author': 'a', 'n': 2},
+        {'n': 3},
+        {'author': 'b', 'n': 4},
+        {'author': None},
+        {'author': 'c'},
+        {'author': 'a'},
+    ])
+
+    # First-seen order, missing fields skipped, falsy values kept
+    assert db.distinct('author') == ['b', 'a', None, 'c']
+    assert db.distinct('n') == [1, 2, 3, 4]
+    assert db.distinct('missing') == []
+
+
+def test_distinct_unhashable_values(db: TinyDB):
+    db.drop_tables()
+    db.insert_multiple([
+        {'tags': ['x', 'y']},
+        {'tags': 'x'},
+        {'tags': ['x', 'y']},
+        {'tags': {'k': 1}},
+        {'tags': ['y']},
+        {'tags': {'k': 1}},
+    ])
+
+    assert db.distinct('tags') == [['x', 'y'], 'x', {'k': 1}, ['y']]
+
+
+def test_distinct_empty_table(db: TinyDB):
+    db.drop_tables()
+    assert db.distinct('anything') == []
+
+
+def test_distinct_on_named_table(db: TinyDB):
+    table = db.table('other')
+    table.insert_multiple([{'v': 2}, {'v': 1}, {'v': 2}])
+
+    assert table.distinct('v') == [2, 1]
+    # The default table has no 'v' values
+    assert db.distinct('v') == []
+
+
 def test_contains(db: TinyDB):
     assert db.contains(where('int') == 1)
     assert not db.contains(where('int') == 0)

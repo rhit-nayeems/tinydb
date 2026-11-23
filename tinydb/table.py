@@ -5,6 +5,7 @@ data in TinyDB.
 
 from collections.abc import Callable, Iterable, Iterator, Mapping, MutableMapping
 from typing import (
+    Any,
     NoReturn,
     Optional,
     Union,
@@ -714,6 +715,43 @@ class Table:
         """
 
         return len(self.search(cond))
+
+    def distinct(self, field: str) -> list[Any]:
+        """
+        Get the unique values of a field across all documents.
+
+        Values are returned in the order they are first seen, following the
+        table's document order. Documents that don't contain the field are
+        skipped. Values are compared by equality, so unhashable values such
+        as lists and dicts are supported; a list-valued field yields the
+        distinct lists, not the distinct list items.
+
+        :param field: the name of the top-level field to collect
+        :returns: a list of the distinct values
+        """
+
+        values: list[Any] = []
+        seen_hashable: set = set()
+
+        for doc in self._read_table().values():
+            if field not in doc:
+                continue
+
+            value = doc[field]
+
+            try:
+                if value in seen_hashable:
+                    continue
+                seen_hashable.add(value)
+            except TypeError:
+                # Unhashable values (lists, dicts, ...) fall back to an
+                # equality check against the values collected so far
+                if value in values:
+                    continue
+
+            values.append(value)
+
+        return values
 
     def clear_cache(self) -> None:
         """
