@@ -408,6 +408,19 @@ In a similar manner you can look up the number of documents matching a query:
 >>> db.count(User.name == 'John')
 2
 
+To get the unique values a field takes across all documents, use
+``db.distinct(...)``. Values are returned in the order they are first seen and
+documents without the field are skipped:
+
+>>> db.insert_multiple([
+...     {'name': 'John', 'age': 22},
+...     {'name': 'Mary'},
+...     {'age': 30},
+...     {'name': 'John', 'age': 37},
+... ])
+>>> db.distinct('name')
+['John', 'Mary']
+
 Recap
 ^^^^^
 
@@ -431,6 +444,8 @@ Let's summarize the ways to handle data:
 | ``db.contains(query)``        | Check if the database contains a matching document            |
 +-------------------------------+---------------------------------------------------------------+
 | ``db.count(query)``           | Get the number of matching documents                          |
++-------------------------------+---------------------------------------------------------------+
+| ``db.distinct(field)``        | Get the unique values of a field, in first-seen order         |
 +-------------------------------+---------------------------------------------------------------+
 
 
