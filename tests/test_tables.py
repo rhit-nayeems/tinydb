@@ -29,6 +29,19 @@ def test_one_table(db):
     assert table1.get(where('char') == 'b')['char'] == 'b'
 
 
+def test_count_without_condition(db):
+    table = db.table('count_test')
+
+    assert table.count() == 0
+    table.insert_multiple([{'value': 1}, {'value': 2}, {'value': 1}])
+    assert table.count() == 3
+    assert table.count(where('value') == 1) == 2
+    table.remove(where('value') == 1)
+    assert table.count() == 1
+    table.truncate()
+    assert table.count() == 0
+
+
 def test_multiple_tables(db):
     table1 = db.table('table1')
     table2 = db.table('table2')
