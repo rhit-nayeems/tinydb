@@ -1,0 +1,1 @@
+{"none": [null, null], "int": 42, "float": 3.14159, "list": ["LITE", "RES_ACID", "SUS_DEXT"], "dict": {"hp": 13, "sp": 5}, "bool": [true, false, true, false]}
