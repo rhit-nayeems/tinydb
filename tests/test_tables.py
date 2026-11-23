@@ -29,6 +29,23 @@ def test_one_table(db):
     assert table1.get(where('char') == 'b')['char'] == 'b'
 
 
+def test_first(db):
+    table = db.table('first')
+    ids = table.insert_multiple({'value': value} for value in (0, 1, 1))
+    seen = []
+
+    def matches(doc):
+        seen.append(doc['value'])
+        return doc['value'] == 1
+
+    result = table.first(matches)
+    assert result == {'value': 1}
+    assert result.doc_id == ids[1]
+    assert seen == [0, 1]
+    assert table.first(where('value') == 2) is None
+    assert db.table('empty').first(where('value') == 1) is None
+
+
 def test_multiple_tables(db):
     table1 = db.table('table1')
     table2 = db.table('table2')
