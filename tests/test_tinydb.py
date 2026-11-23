@@ -9,6 +9,14 @@ from tinydb.storages import MemoryStorage, JSONStorage
 from tinydb.table import Document
 
 
+def test_document_repr_and_equality():
+    document = Document({'a': 1}, doc_id=3)
+
+    assert repr(document) == "Document({'a': 1}, doc_id=3)"
+    assert document == {'a': 1}
+    assert {'a': 1} == document
+
+
 def test_drop_tables(db: TinyDB):
     db.drop_tables()
 

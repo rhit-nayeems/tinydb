@@ -31,6 +31,9 @@ class Document(dict):
         super().__init__(value)
         self.doc_id = doc_id
 
+    def __repr__(self) -> str:
+        return f'Document({dict.__repr__(self)}, doc_id={self.doc_id!r})'
+
 
 class Table:
     """
