@@ -296,6 +296,14 @@ class Table:
 
         return docs
 
+    def first(self, cond: QueryLike) -> Optional[Document]:
+        """Return the first document matching ``cond`` in insertion order.
+
+        :param cond: the condition to check against
+        :returns: the first matching document, or ``None`` if none matches
+        """
+        return self.get(cond)
+
     @overload
     def get(self) -> NoReturn: ...
 
